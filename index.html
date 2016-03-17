@@ -1,55 +1,117 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Diff for diff by postpdm</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Diff for diff</h1>
-        <p></p>
-
-        <p class="view"><a href="https://github.com/postpdm/diff.github.io">View the Project on GitHub <small>postpdm/diff.github.io</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/postpdm/diff.github.io/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/postpdm/diff.github.io/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/postpdm/diff.github.io">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h3>
-<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome to Diff site.</h3>
-
-<p>This site collect the list of Diff utils.</p>
-
-
-<h3>
-<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p></p>
-
-<h3>
-<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? .</p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/postpdm">postpdm</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <title>Diff for diff</title>
+      <script type='text/javascript' src='knockout-3.4.0.js'></script>
+      <script type='text/javascript' src='knockout.simpleGrid.3.0.js'></script>
+      <link rel="stylesheet" type="text/css" href="1.css" />
+   </head>
+   <body>
+      <p>
+<div class='liveExample'> 
+    <h1>Diff for diff</h1>
     
-  </body>
+    <h2>Utils list</h2>
+    <div data-bind='simpleGrid: gridViewModel'> </div>
+         
+    <button data-bind='click: sortByName'>
+        Sort by name
+    </button>
+
+
+    <h1 data-bind="foreach: gridViewModel">        
+            <div>
+                <span data-bind="text: name"> </span> 
+            </div>
+        
+    </h2>
+    
+</div>
+      </p>
+
+<script type="text/javascript">
+
+// http://stackoverflow.com/questions/287903/enums-in-javascript#287917
+
+
+// вопросы
+// надо ли tortoise, или именно tortoiseidiff
+// сравнение текстов и их редактирование?
+// детализировать список изображений
+// двойной просмотр изображений или еще и сравнение
+// состояния для + - проверено, есть, проверено - нет, неизвестно
+
+var initialData = [
+    { name : "KDiff", url : "https://sourceforge.net/projects/kdiff3", last_release : 2, text_files: true },
+    { name : "WinDiff", url : "https://en.wikipedia.org/wiki/WinDiff", text_files: true },
+    { name : "WinMerge", url : "https://sourceforge.net/projects/winmerge", text_files: true }, // картинки - нет. ворд - сравнение текста. pdf - нет
+    { name : "Perceptual Image Diff", url: "https://sourceforge.net/projects/pdiff/", common_images : true },
+    { name : "Tortoise", url: "http://tortoisesvn.net/", text_files: false },
+    { name : "ccdiff", url: "https://sourceforge.net/projects/ccdiff" },
+    { name : "Beyond Compare", url: "http://www.scootersoftware.com/", text_files: true, common_images : true },
+    { name : "DiffEngineX", url: "https://en.wikipedia.org/wiki/DiffEngineX" },
+    { name : "Diff-Text", url: "https://en.wikipedia.org/wiki/Diff-Text" },
+    { name : "Pretty Diff", url: "https://en.wikipedia.org/wiki/Pretty_Diff" },
+    { name : "ExamDiff", url: "http://www.prestosoft.com/ps.asp?page=edp_examdiff", text_files: true },
+    { name : "Compare It!", url: "http://www.grigsoft.com/wincmp3.htm", text_files: true }, // он умеет сравнивать Word и pdf, но только вычленяя из них текст. Т.е. все изменения в картинках - игнорируются. Надо разделить на "сравение текста" и "сравнение внедренной графики"
+    
+    { name: "Diffuse", url: "https://sourceforge.net/projects/diffuse", text_files : true },
+    
+    { name : "N++", url : "https://sourceforge.net/projects/npp-compare" }, // непонятный плагин, умеет сравнивать относительно прошлого сохранения из кеша редактора, а сравнение с svn не работает
+    // из командной строки не передать ему параметров, есть целая дискуссия об этом 
+    // http://stackoverflow.com/questions/9120821/diff-compare-two-files-in-notepad-launched-from-command-line
+    // http://stackoverflow.com/questions/20170541/running-notepad-from-command-line-with-compare-plugin-showing-compare-result?lq=1
+    // оттуда новая ссылка на https://bitbucket.org/uph0/compare/src - форк. Очень грубо падает
+    
+// http://www.araxis.com/merge/
+
+// http://www.sourcegear.com/diffmerge/    
+
+// https://www.perforce.com/product/components/perforce-visual-merge-and-diff-tools
+// P4Merge
+// test
+// images
+
+// https://www.semanticmerge.com/index.html
+
+// https://www.diffplug.com/
+
+// https://alternativeto.net/software/aptdiff/
+// https://alternativeto.net/tag/diff/?p=2&sort=defaultSort
+    //{ name: "", url: "" },
+    
+
+];
+ 
+var PagedGridModel = function(items) {
+    this.items = ko.observableArray(items);
+ 
+    this.sortByName = function() {
+        this.items.sort(function(a, b) {
+            return a.name < b.name ? -1 : 1;
+        });
+    };
+ 
+    this.gridViewModel = new ko.simpleGrid.viewModel({
+        data: this.items,
+        columns: [
+            { headerText: "Name", rowText: "name" },
+            { headerText: "Site", rowText: "url" },
+            { headerText: "Last release", rowText: "last_release" },
+            { headerText: "Text file diff", rowText: function (item) { if (item.text_files) return '+'  } },
+            { headerText: "Common images diff", rowText: function (item) { if (item.common_images) return '+'  } },
+            
+        ],
+        pageSize: 100
+    });
+};
+ 
+ko.applyBindings(new PagedGridModel(initialData));
+
+
+</script>
+
+
+   </body>
 </html>
